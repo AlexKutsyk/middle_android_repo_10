@@ -1,36 +1,29 @@
-package ru.yandex.buggyweatherapp.viewmodel
+package ru.yandex.buggyweatherapp.weather.viewmodel
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import ru.yandex.buggyweatherapp.WeatherApplication
 import ru.yandex.buggyweatherapp.model.Location
 import ru.yandex.buggyweatherapp.model.WeatherData
 import ru.yandex.buggyweatherapp.repository.LocationRepository
-import ru.yandex.buggyweatherapp.repository.WeatherRepository
-import ru.yandex.buggyweatherapp.utils.ImageLoader
+import ru.yandex.buggyweatherapp.weather.data.impl.WeatherRepository
 import java.util.Timer
 import java.util.TimerTask
 
 class WeatherViewModel : ViewModel() {
-    
-    
+
     private lateinit var activityContext: Context
-    
-    
+
     private val weatherRepository = WeatherRepository()
     private val locationRepository by lazy { 
         LocationRepository(activityContext)
     }
-    
-    
+
     val weatherData = MutableLiveData<WeatherData>()
     val currentLocation = MutableLiveData<Location>()
     val isLoading = MutableLiveData<Boolean>()
@@ -116,7 +109,7 @@ class WeatherViewModel : ViewModel() {
     }
     
     
-    fun formatTemperature(temp: Double): String {
+    /*fun formatTemperature(temp: Double): String {
         return "${temp.toInt()}°C"
     }
     
@@ -126,7 +119,7 @@ class WeatherViewModel : ViewModel() {
             val iconUrl = "https://openweathermap.org/img/wn/$iconCode@2x.png"
             ImageLoader.loadImage(iconUrl)
         }
-    }
+    }*/
     
     
     private fun startAutoRefresh() {
