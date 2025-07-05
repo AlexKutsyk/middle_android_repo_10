@@ -1,19 +1,22 @@
-package ru.yandex.buggyweatherapp.api
+package ru.yandex.buggyweatherapp.weather.di
 
 import com.google.gson.Gson
+import dagger.Module
+import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.yandex.buggyweatherapp.BuildConfig
 import ru.yandex.buggyweatherapp.weather.data.api.WeatherApiService
 
-object RetrofitInstance {
-    
-    private val retrofit by lazy {
-        Retrofit.Builder()
+@Module
+class WeatherModule {
+
+    @Provides
+    fun provideWeatherApiWeatherApiService(): WeatherApiService {
+        return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(Gson()))
             .build()
+            .create(WeatherApiService::class.java)
     }
-
-    val weatherApi: WeatherApiService = retrofit.create(WeatherApiService::class.java)
 }

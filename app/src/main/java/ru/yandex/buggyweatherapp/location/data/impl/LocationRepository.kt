@@ -15,7 +15,6 @@ import ru.yandex.buggyweatherapp.utils.LocationTracker
 import java.util.Locale
 
 class LocationRepository(
-    
     private val context: Context
 ) {
     
