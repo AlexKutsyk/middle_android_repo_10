@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -82,9 +83,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     // DI
-    implementation(libs.dagger)
-    ksp (libs.dagger.compiler)
-
+    ksp (libs.hilt.compiler)
+    implementation(libs.hilt.android)
+//    implementation(libs.androidx.hilt.navigation.compose)
 
     // Testing
     testImplementation(libs.junit)

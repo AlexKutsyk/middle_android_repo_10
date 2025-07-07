@@ -48,7 +48,7 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
     
     DisposableEffect(Unit) {
         
-        viewModel.initialize(context)
+//        viewModel.initialize(context)
         
         onDispose {
             
@@ -109,7 +109,7 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
                 weather = weather,
                 cityName = cityName,
                 onFavoriteClick = { viewModel.toggleFavorite() },
-                onRefreshClick = { viewModel.fetchCurrentLocationWeather() }
+                onRefreshClick = { /*viewModel.fetchCurrentLocationWeather()*/ }
             )
         }
     }

@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import ru.yandex.buggyweatherapp.repository.LocationRepository
-import ru.yandex.buggyweatherapp.weather.data.impl.WeatherRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,8 +70,8 @@ fun LocationSearchWithDirectApiCall() {
     var searchText by remember { mutableStateOf("") }
     
     
-    val weatherRepository = WeatherRepository()
-    val locationRepository = LocationRepository(context)
+//    val weatherRepository = WeatherRepository()
+//    val locationRepository = LocationRepository(context)
     
     OutlinedTextField(
         value = searchText,
@@ -85,7 +84,7 @@ fun LocationSearchWithDirectApiCall() {
             IconButton(onClick = { 
                 if (searchText.isNotBlank()) {
                     
-                    weatherRepository.getWeatherByCity(searchText) { weatherData, error -> }
+//                    weatherRepository.getWeatherByCity(searchText) { weatherData, error -> }
                 }
             }) {
                 Icon(Icons.Default.Search, contentDescription = "Search")

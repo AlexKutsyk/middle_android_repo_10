@@ -1,7 +1,9 @@
 package ru.yandex.buggyweatherapp.weather.data.api
 
-import okhttp3.Response
+import ru.yandex.buggyweatherapp.weather.data.dto.Request
+import ru.yandex.buggyweatherapp.weather.data.dto.Response
+
 
 interface NetworkClient {
-    suspend fun doRequest(request: Any): Response
+    suspend fun doRequest(request: Request): Response
 }

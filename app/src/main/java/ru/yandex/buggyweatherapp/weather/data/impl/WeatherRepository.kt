@@ -1,3 +1,4 @@
+/*
 package ru.yandex.buggyweatherapp.weather.data.impl
 
 import android.util.Log
@@ -11,17 +12,13 @@ import ru.yandex.buggyweatherapp.model.WeatherData
 
 class WeatherRepository {
 
-
     private val weatherApi = RetrofitInstance.weatherApi
 
-
     private var cachedWeatherData: WeatherData? = null
-
 
     fun getWeatherData(location: Location, callback: (WeatherData?, Exception?) -> Unit) {
 
         val call = weatherApi.getCurrentWeather(location.latitude, location.longitude)
-
 
         try {
 
@@ -93,7 +90,7 @@ class WeatherRepository {
             sunsetTime = sys.get("sunset").asLong,
             timezone = json.get("timezone").asInt,
             timestamp = json.get("dt").asLong,
-            rawApiData = json.toString(),
+//            rawApiData = json.toString(),
             rain = if (json.has("rain") && json.getAsJsonObject("rain").has("1h"))
                 json.getAsJsonObject("rain").get("1h").asDouble else null,
             snow = if (json.has("snow") && json.getAsJsonObject("snow").has("1h"))
@@ -109,4 +106,4 @@ class WeatherRepository {
 
         return Location(lat, lon, name)
     }
-}
+}*/
