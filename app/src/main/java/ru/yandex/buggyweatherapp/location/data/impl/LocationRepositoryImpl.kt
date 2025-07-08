@@ -1,10 +1,8 @@
-package ru.yandex.buggyweatherapp.location.data
+package ru.yandex.buggyweatherapp.location.data.impl
 
 import android.location.Geocoder
 import android.os.Looper
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -14,17 +12,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
-import ru.yandex.buggyweatherapp.location.data.api.LocationController
+import ru.yandex.buggyweatherapp.location.domain.api.LocationRepository
 import ru.yandex.buggyweatherapp.model.Location
 import javax.inject.Inject
 
-class LocationControllerImpl @Inject constructor(
+class LocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient,
     private val geocoder: Geocoder
-) : LocationController {
+) : LocationRepository {
 
-    //    private var currentLocation: Location? = null
-//    private var locationCallback: ((Location?) -> Unit)? = null
     var currentLocation = MutableStateFlow<Location?>(null)
         private set
 
@@ -35,8 +31,29 @@ class LocationControllerImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCityNameFromLocation(): Flow<String?> {
-        TODO("Not yet implemented")
+    override suspend fun getCityNameFromLocation(location: Location): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                @Suppress("DEPRECATION")
+                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+
+                if (!addresses.isNullOrEmpty()) {
+                    val address = addresses[0]
+                    if (address.locality != null) {
+                        address.locality
+                    } else if (address.subAdminArea != null) {
+                        address.subAdminArea
+                    } else {
+                        address.adminArea
+                    }
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("LocationRepository", "Error getting city name", e)
+                null
+            }
+        }
     }
 
 
@@ -94,35 +111,4 @@ class LocationControllerImpl @Inject constructor(
             currentLocation.value = null
         }
     }
-
-
-    fun getCityNameFromLocation(location: Location): String? {
-        try {
-            @Suppress("DEPRECATION")
-            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-
-            return if (!addresses.isNullOrEmpty()) {
-                val address = addresses[0]
-                if (address.locality != null) {
-                    address.locality
-                } else if (address.subAdminArea != null) {
-                    address.subAdminArea
-                } else {
-                    address.adminArea
-                }
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("LocationRepository", "Error getting city name", e)
-            return null
-        }
-    }
-
-
-    fun startLocationTracking() {
-        LocationTracker.getInstance(context).startTracking()
-    }
-
-
 }

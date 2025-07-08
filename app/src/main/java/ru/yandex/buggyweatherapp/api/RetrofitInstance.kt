@@ -1,3 +1,4 @@
+/*
 package ru.yandex.buggyweatherapp.api
 
 import com.google.gson.Gson
@@ -16,4 +17,4 @@ object RetrofitInstance {
     }
 
     val weatherApi: WeatherApiService = retrofit.create(WeatherApiService::class.java)
-}
+}*/
