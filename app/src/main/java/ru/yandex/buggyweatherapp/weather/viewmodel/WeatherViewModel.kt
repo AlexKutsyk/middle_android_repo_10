@@ -34,7 +34,7 @@ class WeatherViewModel @Inject constructor(
 
     var weatherData = MutableLiveData<WeatherData>()
         private set
-    var currentLocation = MutableLiveData<Location>()
+    var currentLocation = MutableLiveData<Location?>()
         private set
     var isLoading = MutableLiveData<Boolean>()
         private set
@@ -181,6 +181,7 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 currentLocation.value?.let { location ->
+
                     weatherInteractor.getCurrentWeather(
                         Request.CurrentWeather(
                             location.latitude,
@@ -190,7 +191,6 @@ class WeatherViewModel @Inject constructor(
                         handleWeatherDataResult(result)
                     }
                 }
-                Log.i("alex", "getCurrentWeather - ${currentLocation.value}")
                 delay(60000)
             }
         }
