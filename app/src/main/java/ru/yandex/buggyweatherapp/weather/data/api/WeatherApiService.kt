@@ -24,12 +24,4 @@ interface WeatherApiService {
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
     ): Response<WeatherDataDto>
-
-    @GET("forecast")
-    fun getForecast(
-        @Query("lat") latitude: Double,
-        @Query("lon") longitude: Double,
-        @Query("appid") apiKey: String = API_KEY,
-        @Query("units") units: String = "metric"
-    ): Call<JsonObject>
 }
