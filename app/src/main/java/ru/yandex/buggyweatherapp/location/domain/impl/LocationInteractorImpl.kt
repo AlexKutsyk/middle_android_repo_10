@@ -3,7 +3,7 @@ package ru.yandex.buggyweatherapp.location.domain.impl
 import kotlinx.coroutines.flow.Flow
 import ru.yandex.buggyweatherapp.location.domain.api.LocationInteractor
 import ru.yandex.buggyweatherapp.location.domain.api.LocationRepository
-import ru.yandex.buggyweatherapp.model.Location
+import ru.yandex.buggyweatherapp.location.domain.models.Location
 import javax.inject.Inject
 
 class LocationInteractorImpl @Inject constructor(

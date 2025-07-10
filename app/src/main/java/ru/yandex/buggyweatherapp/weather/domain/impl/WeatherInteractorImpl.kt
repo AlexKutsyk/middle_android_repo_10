@@ -7,12 +7,13 @@ import ru.yandex.buggyweatherapp.utils.Resource
 import ru.yandex.buggyweatherapp.weather.data.dto.Request
 import ru.yandex.buggyweatherapp.weather.data.impl.WeatherRepositoryImpl
 import ru.yandex.buggyweatherapp.weather.domain.api.WeatherInteractor
+import ru.yandex.buggyweatherapp.weather.domain.models.RequestError
 import javax.inject.Inject
 
 class WeatherInteractorImpl @Inject constructor(
     private val repository: WeatherRepositoryImpl
 ) : WeatherInteractor {
-    override suspend fun getCurrentWeather(request: Request.CurrentWeather): Flow<Pair<WeatherData?, Int?>> {
+    override suspend fun getCurrentWeather(request: Request.CurrentWeather): Flow<Pair<WeatherData?, RequestError?>> {
         return repository.getCurrentWeather(request).map { result ->
             when (result) {
                 is Resource.Success -> {
@@ -27,7 +28,7 @@ class WeatherInteractorImpl @Inject constructor(
 
     }
 
-    override suspend fun getWeatherByCity(request: Request.WeatherByCity): Flow<Pair<WeatherData?, Int?>> {
+    override suspend fun getWeatherByCity(request: Request.WeatherByCity): Flow<Pair<WeatherData?, RequestError?>> {
         return repository.getWeatherByCity(request).map { result ->
             when (result) {
                 is Resource.Success -> {

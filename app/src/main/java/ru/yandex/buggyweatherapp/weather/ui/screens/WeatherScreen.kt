@@ -1,5 +1,6 @@
-package ru.yandex.buggyweatherapp.ui.screens
+package ru.yandex.buggyweatherapp.weather.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,23 +32,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import ru.yandex.buggyweatherapp.R
 import ru.yandex.buggyweatherapp.model.WeatherData
 import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
+import ru.yandex.buggyweatherapp.weather.domain.models.RequestError
 import ru.yandex.buggyweatherapp.weather.viewmodel.WeatherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
-
+    val context = LocalContext.current
     val weatherData by viewModel.weatherData.observeAsState()
     val isLoading by viewModel.isLoading.observeAsState(false)
     val error by viewModel.error.observeAsState()
     val cityName by viewModel.cityName.observeAsState("")
-    
+
     var searchText by remember { mutableStateOf("") }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -57,44 +62,41 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
         OutlinedTextField(
             value = searchText,
             onValueChange = { searchText = it },
-            label = { Text("Search city") },
+            label = { Text(stringResource(R.string.search_city)) },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-                IconButton(onClick = { 
-                    
-                    viewModel.searchWeatherByCity(searchText) 
+                IconButton(onClick = {
+                    viewModel.searchWeatherByCity(searchText)
                 }) {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
+                    Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search))
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { 
-                viewModel.searchWeatherByCity(searchText) 
+            keyboardActions = KeyboardActions(onSearch = {
+                viewModel.searchWeatherByCity(searchText)
             })
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
-        
+
         if (isLoading && weatherData == null) {
-            Text("Loading weather data...")
+            Text(stringResource(R.string.loading_weather_data))
         }
-        
-        
+
         error?.let {
             Text(
-                text = it,
+                text = handleError(it, context),
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(8.dp)
             )
         }
-        
+
         weatherData?.let { weather ->
             WeatherCard(
                 weather = weather,
                 cityName = cityName,
                 onFavoriteClick = { viewModel.toggleFavorite() },
-                onRefreshClick = { /*viewModel.fetchCurrentLocationWeather()*/ }
+                onRefreshClick = { viewModel.fetchCurrentLocationWeather() }
             )
         }
     }
@@ -128,78 +130,90 @@ fun WeatherCard(
                         style = MaterialTheme.typography.headlineMedium
                     )
                 }
-                
+
                 Row {
                     IconButton(onClick = onFavoriteClick) {
                         Icon(
                             imageVector = if (weather.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite"
+                            contentDescription = stringResource(R.string.favorite)
                         )
                     }
-                    
+
                     IconButton(onClick = onRefreshClick) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh"
+                            contentDescription = stringResource(R.string.refresh)
                         )
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
-            
+
             Text(
-                text = "Temperature: " + weather.temperature.toString() + "°C",
+                text = stringResource(R.string.temperature, weather.temperature.toString()),
                 style = MaterialTheme.typography.bodyLarge
             )
-            
+
             Text(
-                text = "Feels like: " + weather.feelsLike.toString() + "°C",
+                text = stringResource(R.string.feels_like, weather.feelsLike.toString()),
                 style = MaterialTheme.typography.bodyMedium
             )
-            
+
             Text(
-                text = "Description: " + weather.description.replaceFirstChar { it.uppercase() },
+                text = stringResource(
+                    R.string.description,
+                    weather.description.replaceFirstChar { it.uppercase() }),
                 style = MaterialTheme.typography.bodyMedium
             )
-            
+
             Text(
-                text = "Humidity: " + weather.humidity.toString() + "%",
+                text = stringResource(R.string.humidity, weather.humidity.toString()),
                 style = MaterialTheme.typography.bodyMedium
             )
-            
+
             Text(
-                text = "Wind: " + weather.windSpeed.toString() + " m/s",
+                text = stringResource(R.string.wind, weather.windSpeed.toString()),
                 style = MaterialTheme.typography.bodyMedium
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                
+
                 Text(
-                    text = "Sunrise: " + WeatherIconMapper.formatTimestamp(weather.sunriseTime),
+                    text = stringResource(R.string.sunrise) + WeatherIconMapper.formatTimestamp(weather.sunriseTime),
                     style = MaterialTheme.typography.bodySmall
                 )
-                
+
                 Text(
-                    text = "Sunset: " + WeatherIconMapper.formatTimestamp(weather.sunsetTime),
+                    text = stringResource(R.string.sunset) + WeatherIconMapper.formatTimestamp(weather.sunsetTime),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Button(
                 onClick = onRefreshClick,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Refresh Weather")
+                Text(stringResource(R.string.refresh_weather))
             }
         }
+    }
+}
+
+private fun handleError(error: RequestError, context: Context): String {
+    return when (error) {
+        RequestError.Connection -> context.getString(R.string.connection_error)
+        RequestError.EmptyRequest -> context.getString(R.string.city_name_cannot_be_empty)
+        RequestError.Other -> context.getString(R.string.unknown_error)
+        RequestError.Search -> context.getString(R.string.nothing_was_found)
+        RequestError.Server -> context.getString(R.string.server_error)
+        RequestError.UnableLocation -> context.getString(R.string.unable_to_get_current_location)
     }
 }

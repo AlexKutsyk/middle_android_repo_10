@@ -12,4 +12,16 @@
     <string name="no_location_permission">Location permission is required to get current weather</string>
     <string name="location_error">Unable to get current location</string>
     <string name="network_error">Network error. Please check your connection</string>
+    <string name="connection_error">Connection error</string>
+    <string name="city_name_cannot_be_empty">City name cannot be empty</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="nothing_was_found">Nothing was found</string>
+    <string name="server_error">Server error</string>
+    <string name="unable_to_get_current_location">Unable to get current location</string>
+    <string name="search">Search</string>
+    <string name="loading_weather_data">Loading weather data...</string>
+    <string name="favorite">Favorite</string>
+    <string name="sunrise">"Sunrise: "</string>
+    <string name="sunset">"Sunset: "</string>
+    <string name="refresh_weather">Refresh Weather</string>
 </resources>

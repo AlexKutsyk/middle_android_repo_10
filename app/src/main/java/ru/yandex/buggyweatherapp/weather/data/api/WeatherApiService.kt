@@ -16,14 +16,14 @@ interface WeatherApiService {
         @Query("lon") longitude: Double,
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): WeatherDataDto
+    ): Response<WeatherDataDto>
 
     @GET("weather")
     suspend fun getWeatherByCity(
         @Query("q") cityName: String,
         @Query("appid") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): WeatherDataDto
+    ): Response<WeatherDataDto>
 
     @GET("forecast")
     fun getForecast(

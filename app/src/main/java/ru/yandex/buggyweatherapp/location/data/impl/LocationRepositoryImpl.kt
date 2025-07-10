@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import ru.yandex.buggyweatherapp.location.domain.api.LocationRepository
-import ru.yandex.buggyweatherapp.model.Location
+import ru.yandex.buggyweatherapp.location.domain.models.Location
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
@@ -35,7 +35,8 @@ class LocationRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 @Suppress("DEPRECATION")
-                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                val addresses =
+                    geocoder.getFromLocation(location.latitude, location.longitude, MAX_RESULT)
 
                 if (!addresses.isNullOrEmpty()) {
                     val address = addresses[0]
@@ -50,7 +51,7 @@ class LocationRepositoryImpl @Inject constructor(
                     null
                 }
             } catch (e: Exception) {
-                Log.e("LocationRepository", "Error getting city name", e)
+                Log.e(TAG, "Error getting city name", e)
                 null
             }
         }
@@ -72,11 +73,11 @@ class LocationRepositoryImpl @Inject constructor(
                     }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("LocationRepository", "Error getting location", e)
+                    Log.e(TAG, "Error getting location", e)
                     currentLocation.value = null
                 }
         } catch (e: SecurityException) {
-            Log.e("LocationRepository", "Location permission not granted", e)
+            Log.e(TAG, "Location permission not granted", e)
             currentLocation.value = null
         }
     }
@@ -84,9 +85,9 @@ class LocationRepositoryImpl @Inject constructor(
 
     private fun requestLocationUpdates() {
         try {
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, INTERVAL)
                 .setWaitForAccurateLocation(false)
-                .setMinUpdateIntervalMillis(5000)
+                .setMinUpdateIntervalMillis(MIN_UPDATE_INTERVAL)
                 .build()
 
             val locationCallback = object : LocationCallback() {
@@ -107,8 +108,15 @@ class LocationRepositoryImpl @Inject constructor(
                 Looper.getMainLooper()
             )
         } catch (e: SecurityException) {
-            Log.e("LocationRepository", "Location permission not granted", e)
+            Log.e(TAG, "Location permission not granted", e)
             currentLocation.value = null
         }
+    }
+
+    companion object {
+        private const val TAG = "LocationRepository"
+        private const val MAX_RESULT = 5
+        private const val INTERVAL = 10_000L
+        private const val MIN_UPDATE_INTERVAL = 5_000L
     }
 }
